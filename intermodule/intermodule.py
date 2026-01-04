@@ -6,7 +6,9 @@ class SharedGlobal(wrapt.AutoObjectProxy):
     class_id = "intermodule.SharedGlobal"
     
     def __object_proxy__(self, wrapped):
-        return self.set_global(self._self_name, wrapped)
+        obj = SharedGlobal(wrapped)
+        obj._self_name = self._self_name        
+        return obj
 
     def set_to_modules(self, value):
         for module in sys.modules.values():
@@ -25,7 +27,6 @@ class SharedGlobal(wrapt.AutoObjectProxy):
         module = sys.modules[module_name]
         setattr(module, obj._self_name, obj)
         obj.set_to_modules(obj)        
-        return obj
 
     @classmethod
     def get_global(cls, name):
@@ -33,7 +34,10 @@ class SharedGlobal(wrapt.AutoObjectProxy):
             if hasattr(module, name):
                 var = getattr(module, name)
                 if hasattr(var, "class_id") and var.class_id == "intermodule.SharedGlobal":
-                    return var
+                    module_name = sys._getframe(1).f_globals["__name__"]
+                    module = sys.modules[module_name]
+                    setattr(module, var._self_name, var)
+                    break
         else:
             raise NameError(f"name '{name}' is not defined")        
         
