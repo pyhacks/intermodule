@@ -33,7 +33,7 @@ class SharedGlobal(wrapt.AutoObjectProxy):
         for module in sys.modules.values():
             if hasattr(module, name):
                 var = getattr(module, name)
-                if hasattr(var, "class_id") and var.class_id == "intermodule.SharedGlobal":
+                if hasattr(var, "class_id") and var.class_id == "intermodule.SharedGlobal" and var._self_name == name:
                     module_name = sys._getframe(1).f_globals["__name__"]
                     module = sys.modules[module_name]
                     setattr(module, var._self_name, var)
