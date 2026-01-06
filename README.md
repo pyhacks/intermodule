@@ -1,6 +1,9 @@
 # intermodule
 This library makes it possible to share global variables across modules.
 
+# Installation
+```pip install intermodule```
+
 # Api Reference
 _class_ intermodule.**SharedGlobal**
 
